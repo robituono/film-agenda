@@ -5,159 +5,179 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="description" content="Film Agenda: le uscite della settimana scelte da Robi Tuono.">
-<meta name="theme-color" content="#1A2FB0">
+<meta name="theme-color" content="#010FC3">
+<link rel="preload" href="tuono-osd.woff2" as="font" type="font/woff2" crossorigin>
 <title>Film Agenda</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,300..400&family=VT323&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: una colonna da telefono (max 720px) su fondo blu "menu a schermo"; da 960px card su due colonne e scheda con locandina a lato. */
+/* ============================================================
+   Film Agenda · interfaccia "menu VCR"
+   Carattere OSD: Tuono OSD (ricalcato dal riferimento, solo maiuscole)
+   Testi lunghi: Kode Mono 500/700
+   Griglia verticale: 24px
+   ============================================================ */
+@font-face{font-family:'Tuono OSD';src:url(tuono-osd.woff2) format('woff2');font-display:block}
 :root{
-  --blu:#1A2FB0;        /* fondo: menu a schermo del videoregistratore */
-  --blu-scuro:#101c6e;  /* bordo pagina su desktop */
-  --bianco:#F2F2F2;     /* testo, 9:1 sul blu */
-  --tenue:#C3C9E8;      /* testo secondario, 6:1 */
-  --selez:#DADADA;      /* voce selezionata in negativo, testo blu 7,3:1 */
-  --giallo:#FFE14D;     /* unico accento: link e azioni, 7,8:1 */
-  --filetto:#4a5cc8;
-  --pixel:'VT323',ui-monospace,Menlo,monospace;
-  --mono:'Martian Mono',ui-monospace,Menlo,Consolas,monospace;
+  --blu:#010FC3; --bia:#E6EAFF; --gri:#E2E2E2; --box:var(--blu); --sec:#AEB8F4;
+  --gia:#FFE14D; --rec:#FF3B30; --scr:#1426D6;
+  --s:20px; --m:28px; --l:38px; --lh:24px; --ln:1.5px;
+  --osd:'Tuono OSD','Kode Mono',monospace; --txt:'Kode Mono',monospace;
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--blu-scuro)}
-body{background:var(--blu-scuro);color:var(--bianco);font-family:var(--mono);font-stretch:75%;font-weight:300;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--blu)}
-.schermo{position:relative;max-width:720px;margin:0 auto;min-height:100vh;background:var(--blu);padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:28px 48px}
-/* righe di scansione, solo decoro */
-.schermo::after{content:"";position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;width:min(720px,100%);pointer-events:none;z-index:5;background:linear-gradient(transparent 66%,rgba(0,0,30,.2) 66%) 0 0/100% 3px}
-@media (min-width:960px){.schermo::after{width:min(1120px,100%)}}
+html{background:var(--blu)}
+body{background:var(--blu);color:var(--bia);font-family:var(--osd);font-size:var(--s);line-height:var(--lh);text-transform:uppercase;-webkit-text-size-adjust:100%}
 a{color:inherit;text-decoration:none}
-button{background:none;border:0;font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:2px solid var(--giallo);outline-offset:3px}
-.px{font-family:var(--pixel);font-weight:400;letter-spacing:.03em;text-transform:uppercase;font-size-adjust:.58}
-.px button,.px a{text-transform:inherit}
-.glow{text-shadow:0 0 6px rgba(255,255,255,.25)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-transform:inherit;line-height:inherit}
+:focus-visible{outline:var(--ln) solid var(--bia);outline-offset:2px}
+.schermo{max-width:600px;margin:0 auto;padding:0 20px 32px;min-height:100vh}
+.noise{position:absolute;inset:-50%;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 -.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.22;animation:nz .5s steps(5) infinite}
+@keyframes nz{0%{transform:translate(0,0)}20%{transform:translate(-12%,7%)}40%{transform:translate(9%,-11%)}60%{transform:translate(-6%,-4%)}80%{transform:translate(13%,9%)}}
+@keyframes blk{50%{visibility:hidden}}
+@keyframes testina{0%{opacity:1}50%{opacity:0}}
 
-/* testata */
-.testata{text-align:center;margin-bottom:14px}
-.testata .nome{display:block;font-size:26px;letter-spacing:.08em;white-space:nowrap}
-.testata .cura{display:block;font-size:16px;color:var(--tenue)}
-.inv{background:var(--selez);color:var(--blu)}
-.titolo-pag{display:block;text-align:center;font-size:44px;line-height:1;padding:8px 0 4px}
-.navmesi{display:flex;justify-content:space-between;font-size:17px;margin-top:12px}
-.navmesi a{color:var(--giallo);padding-block:10px;min-height:44px;display:inline-flex;align-items:center}
+/* ---- OSD fisso in alto ---- */
+.osd{position:sticky;top:0;z-index:5;background:var(--blu);display:flex;justify-content:space-between;gap:12px;padding:14px 0 6px;margin:0 -2px}
+.osd .ic{margin-right:6px}
+#st.rec{color:var(--rec)}
+#ch:not(:empty){margin-right:12px}
+#tc{font-variant-numeric:tabular-nums}
 
-/* righe di scelta (settimane, filtri, per mese/genere) */
-.scelte{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;font-size:16px}
-.scelte button,.scelte a{padding:8px 4px 6px;min-height:40px;white-space:nowrap}
-.scelte [aria-pressed="true"],.scelte [aria-current="page"]{background:var(--selez);color:var(--blu)}
-.scelte .sl{color:var(--tenue)}
-.sett{justify-content:space-between;margin-top:10px;flex-wrap:nowrap;gap:2px;font-size:15px;letter-spacing:0}
-.sett a{padding-inline:3px}
-.filtri{margin-top:2px}
-.conta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font-size:17px;border-bottom:2px solid var(--bianco);padding:10px 0 6px}
+/* ---- box (intestazione e piede) ---- */
+.box{background:var(--gri);color:var(--box);-webkit-text-stroke:.55px currentColor;paint-order:stroke fill;padding:6px 8px 4px;margin-top:var(--lh)}
+.box.testata{text-align:center}
+.box.testata span{display:block}
+.box.piede span{display:block}
+.k{padding:0 2px;cursor:pointer}.k:hover,.k:focus-visible{background:var(--blu);color:var(--gri);outline:none}
+.ok{display:inline-block;font-size:.82em;border:var(--ln) solid currentColor;border-radius:4px;padding:1px 3px 0;line-height:1;vertical-align:1px;-webkit-text-stroke:0}
+.cred{font-family:var(--txt);font-weight:500;text-transform:none;font-size:13px;line-height:1.45;color:var(--sec);margin-top:12px}
 
-/* intestazione settimana nella vista mese */
-.wk{text-align:center;font-size:21px;margin-top:28px}
-.wk::before{content:"--- "}.wk::after{content:" ---"}
+/* ---- righe di navigazione ---- */
+.mrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:var(--lh)}
+.mrow a,.y{color:var(--gia)}
+.mrow .m{color:var(--bia);font-size:var(--s);font-weight:400;line-height:var(--lh)}
+.mrow>*{white-space:nowrap}
+.mrow .m a{color:var(--bia);padding:0 3px}.mrow .m a[aria-current]{background:var(--bia);color:var(--box)}
+.prog{display:flex;align-items:center;gap:10px;margin-top:var(--lh);cursor:pointer;outline:none}
+.prog:focus-visible{box-shadow:0 0 0 var(--ln) var(--bia)}
+.seg{display:block;flex:1;height:12px;position:relative;background:repeating-linear-gradient(90deg,var(--bia) 0 6px,transparent 6px 10px) 0 50%/100% var(--ln) no-repeat}
+.seg i{position:absolute;left:0;top:0;bottom:0;background:var(--blu) repeating-linear-gradient(90deg,var(--bia) 0 3px,transparent 3px 7px)}
+.seg i::after{content:"";position:absolute;right:-1px;top:-3px;bottom:-3px;width:4px;background:var(--bia);opacity:0}
+.prog.go .seg i{animation:fill .8s steps(26) both}
+.prog.go .seg i::after{animation:testina 1.2s steps(1) .8s infinite}
+.prog.fermo .seg i::after{animation:none!important;opacity:1}
+@keyframes fill{from{width:0}}
+.opt{display:flex;flex-wrap:wrap;gap:0 10px;margin-top:var(--lh)}
+.opt+.opt{margin-top:0}
+.opt a,.opt button{white-space:nowrap}
+.opt [aria-current],.opt [aria-pressed=true],.inv{background:var(--bia);color:var(--box);padding:0 3px}
+.opt .sl{color:var(--sec)}
+.rec-dot{color:var(--rec);margin-right:3px}
+.cnt{margin-top:var(--lh)}
+.tot{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:var(--lh)}
+.tot span:last-child{text-align:right}
 
-/* card */
-.lista{display:grid;grid-template-columns:minmax(0,1fr)}
-.card{display:grid;grid-template-columns:132px minmax(0,1fr);column-gap:16px;padding-block:24px;border-bottom:2px dashed var(--filetto)}
-.loc{position:relative;display:block;width:132px;aspect-ratio:2/3;max-width:100%;border:2px solid var(--bianco);overflow:hidden;background:var(--blu-scuro)}
-.loc img,.grande img{width:100%;height:100%;object-fit:cover;display:block}
-.loc .vuota,.grande .vuota{display:flex;height:100%;align-items:center;justify-content:center;text-align:center;font-size:15px;color:var(--tenue);padding:8px}
+/* ---- intestazioni di sezione: nome + trattini fino a fine riga ---- */
+.sez-t{display:flex;align-items:center;gap:10px;margin-top:calc(var(--lh)*1.5);font-weight:400;font-size:var(--s)}
+.sez-t::after{content:"";flex:1;height:var(--ln);background:repeating-linear-gradient(90deg,var(--bia) 0 6px,transparent 6px 10px)}
+.sez-t+*{margin-top:12px}
+.sez-t.solo{gap:0}
+.lista>.sez-t:first-child{margin-top:var(--lh)}
+
+/* ---- card ---- */
+.card{display:grid;grid-template-columns:132px minmax(0,1fr);column-gap:16px;padding-block:22px;border-top:1px dashed rgba(230,234,255,.35);outline:none}
+.loc{position:relative;display:block;width:132px;aspect-ratio:2/3;border:var(--ln) solid var(--bia);background:var(--scr);overflow:hidden}
+.loc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.loc .o{position:absolute;top:4px;left:6px;font-size:16px;z-index:2}
+.loc.in img{opacity:1;animation:trk .3s steps(1) both}
+.loc.in .noise,.loc.in .o{display:none}
+.loc .vuota{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px}
+@keyframes trk{0%{transform:translate(0,-18%);clip-path:inset(0 0 60% 0)}33%{transform:translate(5px,-6%);clip-path:inset(0 0 22% 0)}66%{transform:translate(-3px,0);clip-path:inset(0)}100%{transform:none;clip-path:none}}
 .meta{min-width:0}
-.riga1{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:16px;color:var(--tenue)}
-.tag{border:2px solid var(--bianco);border-radius:6px;padding:0 5px;font-size:14px;color:var(--bianco);line-height:1.3}
-.tag.visto{background:var(--selez);border-color:var(--selez);color:var(--blu)}
-.card h2{font-size:29px;line-height:.95;margin-top:4px;overflow-wrap:anywhere}
-.card .di,.film .di{font-size:16px;margin-top:6px}
-.di a{color:var(--giallo)}
-.gen{font-size:16px;color:var(--tenue);margin-top:4px}
-.dur{display:block;height:9px;border:2px solid var(--bianco);margin-top:8px;max-width:150px;padding:1px}
-.dur i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--selez) 0 4px,transparent 4px 6px)}
-.plot{grid-column:1/-1;margin-top:16px;max-width:62ch}
-.tec{grid-column:1/-1;font-size:15px;color:var(--tenue);margin-top:6px}
-.apri{grid-column:1/-1;justify-self:start;color:var(--giallo);font-size:18px;padding-block:8px;margin-top:4px}
+.tag{margin-left:8px}
+h2.t{font-size:var(--m);line-height:1;font-weight:400;margin-top:4px}
+.card.sel h2.t a{background:var(--bia);color:var(--blu);box-decoration-break:clone;-webkit-box-decoration-break:clone;padding:0 4px}
+.di{margin-top:6px}.di a{color:var(--gia)}
+.gen{color:var(--sec)}.gen:first-of-type{margin-top:6px}
+.vol{height:12px;max-width:160px;margin-top:6px;border:var(--ln) solid var(--bia);padding:1px}
+.vol i{display:block;height:100%;width:0;background:var(--gri)}
+.vol.on i{width:var(--w);transition:width .6s steps(12)}
+.plot,.testo{font-family:var(--txt);font-weight:500;text-transform:none;font-size:16px;line-height:1.35}
+.plot{grid-column:1/-1;margin-top:12px}
+.testo b,.plot b{font-weight:700}
+.apri{grid-column:1/-1;justify-self:start;margin-top:8px;color:var(--gia)}
 
-/* canvas della tendina DV */
-.tend{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
-
-/* scheda film */
-.film{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
-.indietro{display:inline-flex;align-items:center;min-height:44px;color:var(--giallo);font-size:18px}
-.grande{position:relative;width:100%;aspect-ratio:2/3;max-width:100%;border:2px solid var(--bianco);overflow:hidden;margin-top:6px;background:var(--blu-scuro)}
-.film h1{font-size:52px;line-height:.9;margin-top:6px;overflow-wrap:anywhere}
-.film .gen{color:var(--bianco);font-size:18px}
-.film .dur{max-width:220px}
-.frase{font-size:17px;line-height:1.45;margin-top:18px;max-width:62ch}
-.filo{display:grid;grid-template-columns:24px minmax(0,1fr);margin-top:22px;padding-top:16px;border-top:2px dashed var(--filetto);max-width:66ch}
-.filo .seg{color:var(--giallo)}
-.sez{border-top:2px dashed var(--filetto);margin-top:24px;padding-top:16px;max-width:66ch}
-.et{display:inline-block;font-size:19px;padding:2px 8px 0;margin-bottom:12px}
-.regista{font-size:20px}
-.regista a{color:var(--giallo)}
-.righe{display:grid;grid-template-columns:110px minmax(0,1fr);row-gap:8px;column-gap:12px;font-size:14px;margin-top:12px}
-.righe dt{font-family:var(--pixel);text-transform:uppercase;font-size:15px;color:var(--tenue);letter-spacing:.03em}
-.righe dd a{color:var(--giallo)}
-.righe .anno-p{color:var(--tenue)}
-.testo{margin-top:12px}
-.critica{display:grid;grid-template-columns:24px minmax(0,1fr);row-gap:10px}
-.critica dt{font-family:var(--pixel);font-size:22px;line-height:1.1;color:var(--giallo)}
+/* ---- scheda film ---- */
+.grande{position:relative;width:100%;aspect-ratio:2/3;border:var(--ln) solid var(--bia);background:var(--scr);overflow:hidden;margin-top:var(--lh)}
+.grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.grande.in img{opacity:1;animation:trk .3s steps(1) both}
+.grande.in .noise,.grande.in .o{display:none}
+.grande .o{position:absolute;top:6px;left:8px;z-index:2}
+.anno1{margin-top:var(--lh)}
+h1.t{font-size:var(--l);line-height:1;font-weight:400;margin-top:4px}
+.regista a{color:var(--gia)}
+.righe{display:grid;grid-template-columns:auto 1fr;gap:0 14px}
+.righe dt{color:var(--sec)}
+.righe+.testo,.testo+.righe,.regista+.testo,.testo+.testo{margin-top:12px}
+.quello a{color:var(--bia)}.quello a:hover{color:var(--gia)}
+.quello .an{color:var(--sec)}
+.pm{list-style:none;font-family:var(--txt);font-weight:500;text-transform:none;font-size:16px;line-height:1.35}
+.pm li{display:flex;gap:8px;align-items:baseline}.pm li+li{margin-top:8px}
+.pm .inv{flex:none;width:18px;text-align:center;line-height:16px;font-family:var(--osd)}
 .voci{list-style:none}
-.voci li{padding-block:10px;border-bottom:2px dashed var(--filetto)}
-.voci li:last-child{border-bottom:0}
-.voci .ruolo{color:var(--tenue)}
-.voci a{color:var(--giallo)}
-.dove{font-size:14px;color:var(--tenue);margin-bottom:6px}
+.voci .ruolo{color:var(--sec)}
+.link-ok a{color:var(--gia);display:inline-block;margin:4px 16px 0 0}
 
-/* pagina anno */
-.cifre{display:grid;grid-template-columns:auto auto auto;justify-content:space-between;border:2px solid var(--bianco);padding:10px;margin:18px 0 26px}
-.cifre b{display:block;font-family:var(--pixel);font-weight:400;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
-.cifre span{font-family:var(--pixel);font-size:15px;color:var(--tenue);text-transform:uppercase}
-.top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 12px}
-.tp{display:block;min-width:0}
-.tp .loc{width:100%}
-.pz{position:absolute;top:0;left:0;z-index:2;font-size:16px;padding:0 5px}
-.tt{display:block;font-size:17px;line-height:1;margin-top:6px}
-.tr{display:block;font-size:14px;color:var(--tenue)}
-.modo{justify-content:center;margin-top:32px}
-.gr{display:flex;justify-content:space-between;align-items:baseline;font-size:22px;border-bottom:2px solid var(--bianco);margin-top:24px;padding-bottom:4px}
-.gr span{font-size:16px;color:var(--tenue)}
-.vuoto{color:var(--tenue);padding-block:12px}
+/* ---- anno ---- */
+.cifre{margin-top:var(--lh)}
+.cifre div{display:flex;justify-content:space-between}
+.cifre b{font-weight:400}
+.top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px}
+.top a{display:block}
+.top .loc{width:100%}
+.top .pz{display:inline-block;margin-top:8px}
+.top .tt{display:block;margin-top:4px;line-height:1.1}
+.top .tr{display:block;color:var(--sec);margin-top:2px}
 .la{list-style:none}
-.la li{padding-block:10px;border-bottom:2px dashed var(--filetto)}
-.la a{font-size:21px;line-height:1}
-.la .rr{display:block;font-size:14px;color:var(--tenue);margin-top:2px}
+.la li{padding:6px 0;border-top:1px dashed rgba(230,234,255,.25)}
+.la li:first-child{border-top:0}
+.la a{display:block}
+.la .rr{display:block;color:var(--sec)}
 
-.piede{margin-top:40px;font-size:12px;color:var(--tenue);line-height:1.6;max-width:62ch}
-.agg{font-size:15px;color:var(--tenue);text-align:center;margin-top:4px}
+/* ---- stati: caricamento, no signal, errore ---- */
+.screen{position:relative;overflow:hidden;margin-top:var(--lh);min-height:340px;border:var(--ln) solid var(--bia);background:var(--scr);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--lh);text-align:center;padding:24px}
+.screen .noise{opacity:.32}
+.screen>*{position:relative}
+.sig{font-size:var(--m);letter-spacing:.08em;animation:testina 1.2s steps(1) infinite}
+.trk2{width:70%;height:12px;border:var(--ln) solid var(--bia)}
+.trk2 i{position:absolute;top:0;bottom:0;width:6px;background:var(--bia);left:50%;animation:trk3 1.6s ease-in-out infinite alternate}
+@keyframes trk3{from{left:10%}to{left:85%}}
+#boot{position:fixed;inset:0;z-index:20;background:#2633C8;overflow:hidden}
+#boot .o{position:absolute;font-size:24px}
+#boot .tl{top:46px;left:34px}#boot .tr{top:46px;right:34px;text-align:right}#boot .bl{bottom:90px;left:34px}#boot .bc{bottom:90px;left:130px}
+#boot .cap{position:absolute;left:0;right:0;top:48%;text-align:center;letter-spacing:.3em;opacity:0}
+#boot.play .cap{opacity:1}
+#boot.cut{animation:cut .16s steps(2) both}
+@keyframes cut{0%{transform:translateX(0)}50%{transform:translateX(-6px)}100%{transform:none}}
+.alline{animation:blk .6s steps(1) infinite}
 
-@media (min-width:960px){
-  .schermo{max-width:1120px;padding-block:44px 64px}
-  .testata .nome{font-size:30px}
-  .titolo-pag{font-size:56px}
-  .lista{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px}
-  .lista .wk{grid-column:1/-1}
+@media (min-width:640px){
   .card{grid-template-columns:160px minmax(0,1fr)}
   .card .loc{width:160px}
-  .film{grid-template-columns:400px minmax(0,1fr);column-gap:56px;align-items:start}
-  .film .col-loc{position:sticky;top:24px}
-  .film h1{font-size:72px}
-  .top{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .top{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
-@media (prefers-reduced-motion:reduce){.tend{display:none}}
+@media (prefers-reduced-motion:reduce){
+  .noise,.sig,.trk2 i,.alline,.prog.go .seg i,.prog.go .seg i::after,.loc.in img,.grande.in img,#boot.cut{animation:none!important}
+  .prog .seg i::after{opacity:1}
+  .vol i,.vol.on i{width:var(--w);transition:none}
+}
 </style>
-
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<main class="schermo" id="app" aria-live="polite">
-  <div class="testata px glow"><span class="nome">--- Film Agenda ---</span><span class="cura">Curated Selection by Robi Tuono</span></div>
-  <p class="agg px">Caricamento della selezione…</p>
-</main>
+<div id="boot" aria-hidden="true"><div class="noise"></div><span class="o tl" id="bs">STOP</span><span class="o tr"><span id="bcnt" class="alline">--:--</span><br>CH 01</span><span class="o bl">SP</span><span class="o bc" id="btc">0:00:00</span><div class="cap">FILM AGENDA</div></div>
+<main class="schermo" id="app" aria-live="polite"></main>
 
 <script>
 (() => {
@@ -169,134 +189,147 @@ const CINEMA = [                               // programmazione in lingua origi
   ['Cinema in v.o. a Milano', 'https://www.mymovies.it/cinema/milano/versione-originale/'],
   ['Cinema in v.o. a Monza e Brianza', 'https://www.mymovies.it/cinema/monza/versione-originale/'],
 ];
+const PAUSA_MS = 30000;                        // pagina ferma -> "‖ PAUSE"
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const app = document.getElementById('app');
-let DATI = null, FILM = [], filtro = 'tutti', modoAnno = 'mese';
+let DATI = null, FILM = [], filtro = 'tutti', modoAnno = 'mese', vistaCorrente = null, settCorrente = null;
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// testo lungo: i nomi tra *asterischi* vanno in grassetto
+const ricco = s => esc(s).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+const piano = s => String(s ?? '').replace(/\*/g, '');
 const d = s => { const [y,m,g] = s.split('-').map(Number); return new Date(y, m-1, g); };
 const piu = (dt, n) => { const x = new Date(dt); x.setDate(x.getDate()+n); return x; };
 const lab = dt => dt.getDate() + ' ' + MESI_B[dt.getMonth()];
+const dm = dt => dt.getDate() + '.' + (dt.getMonth()+1);
 const ymd = dt => dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
-// una settimana appartiene al mese del suo giovedì
-const meseDi = lun => ymd(piu(d(lun), 3)).slice(0,7);
+const meseDi = lun => ymd(piu(d(lun), 3)).slice(0,7);           // una settimana appartiene al mese del suo giovedì
 const nomeMese = ym => MESI[+ym.slice(5)-1] + ' ' + ym.slice(0,4);
-const ore = m => Math.floor(m/60) + ':' + String(m%60).padStart(2,'0');
+const tcMin = m => Math.floor(m/60) + ':' + String(m%60).padStart(2,'0') + ':00';
+const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s/3600) + ':' + String(Math.floor(s%3600/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); };
 const ext = (href, txt) => `<a href="${esc(href)}" target="_blank" rel="noopener">${txt}</a>`;
 const nomi = arr => (arr||[]).map(p => p.link ? ext(p.link, esc(p.nome)) : esc(p.nome)).join(', ');
 const nomiTesto = arr => (arr||[]).map(p => esc(p.nome)).join(', ');
+const OK = '<span class="ok">OK</span>';
+const BREVE = {Documentario:'Doc', Fantascienza:'Sci-fi', Animazione:'Anim.'};
 
-function testata(){ return `<div class="testata px glow"><span class="nome">--- Film Agenda ---</span><span class="cura">Curated Selection by Robi Tuono</span></div>`; }
-function piede(){ return `<p class="piede">Dati e locandine da TMDB. Questo prodotto usa l'API di TMDB ma non è approvato né certificato da TMDB. Disponibilità in streaming da JustWatch.</p>`; }
-function locandina(f, cls){
-  const inner = f.poster ? `<img src="${esc(f.poster)}" alt="Locandina di ${esc(f.titolo)}" loading="lazy" decoding="async">`
-                         : `<span class="vuota px">${esc(f.titolo)}</span>`;
-  return inner;
-}
-function barra(min, max=180){ return `<span class="dur" aria-hidden="true"><i style="width:${Math.min(100, Math.round(min/max*100))}%"></i></span>`; }
-function tags(f){ return (f.sala ? '<span class="tag px">In sala</span>' : '') + (f.visto ? '<span class="tag visto px">✓ Visto</span>' : ''); }
+/* ---------- pezzi comuni ---------- */
+const osd = (sx, dx) => `<div class="osd" aria-hidden="true"><span><span class="ic"></span><span id="st">${sx}</span></span><span><span id="ch"></span><span id="tc">${dx}</span></span></div>`;
+const testata = () => `<div class="box testata" role="banner"><span>Film Agenda</span><span>Curated Selection</span><span>by Robi Tuono</span></div>`;
+const piede = () => `<div class="box piede"><span>Scegli con (<button class="k" data-k="su" aria-label="Film precedente">▲</button><button class="k" data-k="giu" aria-label="Film successivo">▼</button>) e <button class="k" data-k="ok" aria-label="Apri il film scelto">${OK}</button></span><span>Premi (<a class="k" href="#anno">Menu</a>) per l'anno</span></div>
+  <p class="cred">Dati e locandine da TMDB. Questo prodotto usa l'API di TMDB ma non è approvato né certificato da TMDB. Disponibilità in streaming da JustWatch.</p>`;
+const locandina = (f, cls='loc', etichetta='STOP') => f.poster
+  ? `<span class="${cls}"><span class="noise"></span><span class="o">${etichetta}</span><img src="${esc(f.poster)}" alt="Locandina di ${esc(f.titolo)}" decoding="async"></span>`
+  : `<span class="${cls} in"><span class="vuota">${esc(f.titolo)}</span></span>`;
+const vol = m => `<div class="vol" aria-hidden="true" style="--w:${Math.min(100, Math.round(m/180*100))}%"><i></i></div>`;
+const tags = f => (f.sala ? '<span class="tag inv">In sala</span>' : '') + (f.visto ? '<span class="tag inv">✓ Visto</span>' : '');
+const sez = (titolo, html, aria) => html ? `<section><h2 class="sez-t${titolo ? '' : ' solo'}"${aria ? ` aria-label="${aria}"` : ''}>${titolo}</h2>${html}</section>` : '';
 
-function card(f){
-  const tec = [f.camera, f.fotografia].filter(Boolean).join(' · ');
-  return `<article class="card">
-    <a class="loc" href="#f-${esc(f.id)}" tabindex="-1" aria-hidden="true">${locandina(f)}</a>
+function card(f, i){
+  return `<article class="card" tabindex="-1" data-id="${esc(f.id)}" data-ch="${String(i+1).padStart(2,'0')}">
+    <a href="#f-${esc(f.id)}" tabindex="-1" aria-hidden="true">${locandina(f)}</a>
     <div class="meta">
-      <div class="riga1 px">${esc(f.anno)}${tags(f)}</div>
-      <h2 class="px glow"><a href="#f-${esc(f.id)}">${esc(f.titolo)}</a></h2>
-      <div class="di px">di ${nomi(f.regia)}</div>
-      <div class="gen px">${esc((f.generi||[]).join(', '))}${f.durata ? ' · ' + esc(f.durata) : ''}</div>
-      ${f.minuti ? barra(f.minuti) : ''}
+      <div>${esc(f.anno)}${tags(f)}</div>
+      <h2 class="t"><a href="#f-${esc(f.id)}">${esc(f.titolo)}</a></h2>
+      <div class="di">di ${nomi(f.regia)}</div>
+      ${f.generi && f.generi.length ? `<div class="gen">${esc(f.generi.join(', '))}</div>` : ''}
+      ${f.durata ? `<div class="gen">${esc(f.durata)}</div>` : ''}
+      ${f.minuti ? vol(f.minuti) : ''}
     </div>
-    ${f.trama ? `<p class="plot">${esc(f.trama)}</p>` : ''}
-    ${tec ? `<p class="tec px">${esc(tec)}</p>` : ''}
-    <a class="apri px" href="#f-${esc(f.id)}">▶ Scheda</a>
+    ${f.trama ? `<p class="plot">${ricco(f.trama)}</p>` : ''}
+    <a class="apri" href="#f-${esc(f.id)}">${OK} Scheda</a>
   </article>`;
 }
 
 /* ---------- vista mese / settimana ---------- */
 function vistaMese(ym, sett){
   const films = FILM.filter(f => meseDi(f.settimana) === ym);
-  const settimane = [...new Set(films.map(f => f.settimana))].sort();
   const mesi = [...new Set(FILM.map(f => meseDi(f.settimana)))].sort();
-  const prec = mesi[mesi.indexOf(ym)-1], succ = mesi[mesi.indexOf(ym)+1];
+  const iM = mesi.indexOf(ym), prec = iM > 0 ? mesi[iM-1] : (iM < 0 ? mesi.filter(m => m < ym).pop() : null), succ = iM >= 0 ? mesi[iM+1] : null;
   if (!sett) sett = 'mese';
-  const vis = (sett === 'mese' ? films : films.filter(f => f.settimana === sett));
-  // filtri: i generi più presenti nel mese
+  const nav = `<nav class="mrow" aria-label="Mesi">${prec ? `<a href="#m-${prec}">◀ ${MESI_B[+prec.slice(5)-1]}</a>` : '<span></span>'}<h1 class="m">${films.length ? `<a href="#m-${ym}" ${sett==='mese'?'aria-current="page"':''} title="Tutto il mese">${esc(nomeMese(ym))}</a>` : esc(nomeMese(ym))}</h1>${succ ? `<a href="#m-${succ}">${MESI_B[+succ.slice(5)-1]} ▶</a>` : `<a href="#anno">Anno ▶</a>`}</nav>`;
+  if (!films.length) {          // mese senza film: NO SIGNAL
+    app.innerHTML = osd('■ STOP', '--:--:--') + testata() + nav +
+      `<div class="screen"><div class="noise"></div><p class="sig">No signal</p><p>I film di ${esc(MESI[+ym.slice(5)-1])}<br>arrivano il lunedì</p></div>` + piede();
+    vistaCorrente = 'vuoto'; dopo(); return;
+  }
+  const settimane = [...new Set(films.map(f => f.settimana))].sort();
+  if (!sett) sett = 'mese';
+  const vis = sett === 'mese' ? films : films.filter(f => f.settimana === sett);
   const conta = {}; films.forEach(f => (f.generi||[]).forEach(g => conta[g] = (conta[g]||0)+1));
   const generi = Object.entries(conta).sort((a,b) => b[1]-a[1]).slice(0,4).map(x => x[0]);
   if (filtro !== 'tutti' && !generi.includes(filtro)) filtro = 'tutti';
-  const ok = f => filtro === 'tutti' || (f.generi||[]).includes(filtro);
-  const mostra = vis.filter(ok);
+  const mostra = vis.filter(f => filtro === 'tutti' || (f.generi||[]).includes(filtro));
   const tot = mostra.reduce((a,f) => a + (f.minuti||0), 0);
   const range = sett === 'mese' ? nomeMese(ym) : lab(d(sett)) + ' – ' + lab(piu(d(sett),6));
+  // avanzamento del mese: pieno per i mesi chiusi, fino al lunedì dell'ultima settimana per il mese in corso
+  const giorni = new Date(+ym.slice(0,4), +ym.slice(5), 0).getDate();
+  const ultima = DATI.aggiornato, inCorso = meseDi(ultima) === ym;
+  const fino = inCorso ? Math.min(giorni, Math.max(1, d(ultima).getMonth()+1 === +ym.slice(5) ? d(ultima).getDate() : giorni)) : giorni;
+  const nuova = settimanaNuova();
+  let corpo = '', n = 0;
+  if (sett === 'mese') settimane.forEach(w => {
+    const fw = mostra.filter(f => f.settimana === w); if (!fw.length) return;
+    corpo += `<h2 class="sez-t">Settimana ${dm(d(w))} – ${dm(piu(d(w),6))}</h2>` + fw.map(f => card(f, n++)).join('');
+  });
+  else corpo = mostra.map(f => card(f, n++)).join('');
+  if (!mostra.length) corpo = `<p class="testo" style="margin-top:var(--lh)">Nessun film di questo genere in questa vista. Scegli "tutti".</p>`;
 
-  let corpo = '';
-  if (sett === 'mese') {
-    settimane.forEach(w => {
-      const fw = mostra.filter(f => f.settimana === w);
-      if (!fw.length) return;
-      corpo += `<h3 class="wk px glow">Settimana ${lab(d(w))} – ${lab(piu(d(w),6))}</h3>` + fw.map(card).join('');
-    });
-  } else corpo = mostra.map(card).join('');
-  if (!mostra.length) corpo = `<p class="vuoto px">Nessun film di questo genere in questa vista. Scegli "Tutti".</p>`;
-
-  app.innerHTML = testata() + `
-    <h1 class="titolo-pag px inv">${esc(nomeMese(ym))}</h1>
-    <nav class="navmesi px" aria-label="Mesi">
-      ${prec ? `<a href="#m-${prec}">◀ ${esc(nomeMese(prec))}</a>` : '<span></span>'}
-      ${succ ? `<a href="#m-${succ}">${esc(nomeMese(succ))} ▶</a>` : `<a href="#anno">Anno ▶</a>`}
+  app.innerHTML = osd('▶ Play', '0:00:00') + testata() + nav + `
+    <div class="prog" role="button" tabindex="0" aria-pressed="false" aria-label="Metti in pausa la testina del mese">
+      <span>1.${+ym.slice(5)}</span><span class="seg" aria-hidden="true"><i style="width:${(fino/giorni*100).toFixed(1)}%"></i></span><span>${giorni}.${+ym.slice(5)}</span></div>
+    <nav class="opt" aria-label="Settimane">
+      ${settimane.map(w => `<a href="#w-${w}" ${sett===w?'aria-current="page"':''}>${w === nuova ? '<span class="rec-dot" aria-label="nuova">●</span>' : ''}${dm(d(w))}</a>`).join('')}
     </nav>
-    <nav class="scelte sett px" aria-label="Settimane">
-      <a href="#m-${ym}" ${sett==='mese'?'aria-current="page"':''}>Mese</a><span class="sl" aria-hidden="true">/</span>
-      ${settimane.map(w => `<a href="#w-${w}" ${sett===w?'aria-current="page"':''}>${lab(d(w))}</a>`).join('')}
-    </nav>
-    <div class="scelte filtri px" role="group" aria-label="Genere">
-      ${['tutti', ...generi].map(g => `<button type="button" data-g="${esc(g)}" aria-pressed="${filtro===g}">${esc(g)}</button>`).join('')}
+    <div class="opt" role="group" aria-label="Genere">
+      ${['tutti', ...generi].map(g => `<button type="button" data-g="${esc(g)}" aria-pressed="${filtro===g}" aria-label="${esc(g)}">${esc(BREVE[g] || g)}</button>`).join('')}
     </div>
-    <div class="conta px"><span>${mostra.length} film · ${esc(range)}</span><span>Tot ${ore(tot)}:00</span></div>
-    <div class="lista">${corpo}</div>` + piede();
-  app.querySelectorAll('.filtri button').forEach(b => b.onclick = () => { filtro = b.dataset.g; vistaMese(ym, sett); });
-  arma();
+    <div class="cnt">${mostra.length} film</div>
+    <div class="tot"><span>${esc(range)}</span><span>Tot ${tcMin(tot)}<br>SP</span></div>
+    <div class="lista" data-tot="${tot*60}">${corpo}</div>` + piede();
+  app.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { filtro = b.dataset.g; vistaMese(ym, sett); });
+  vistaCorrente = 'mese'; settCorrente = sett;
+  dopo();
 }
 
 /* ---------- scheda film ---------- */
 function vistaFilm(id){
   const f = FILM.find(x => x.id === id);
-  if (!f) { app.innerHTML = testata() + `<p class="vuoto px">Questo film non è nella selezione.</p><a class="indietro px" href="#">◀ Torna alla settimana</a>`; return; }
-  const righe = (arr) => arr.filter(r => r[1]).map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
-  const sez = (titolo, html) => html ? `<section class="sez"><h2 class="et px inv">${titolo}</h2>${html}</section>` : '';
-  const regia = f.regia && f.regia.length ? `<p class="regista px">${nomi(f.regia)}</p>
-      ${f.regia_frase ? `<p class="testo">${esc(f.regia_frase)}</p>` : ''}
-      ${f.prima && f.prima.length ? `<dl class="righe"><dt>Quello di</dt><dd>${f.prima.map(p => (p.link ? ext(p.link, esc(p.titolo)) : esc(p.titolo)) + (p.anno ? ` <span class="anno-p">${esc(p.anno)}</span>` : '')).join('<br>')}</dd></dl>` : ''}` : '';
-  const ripresaRighe = righe([['Fotografia', esc(f.fotografia)], ['Camera', esc(f.camera)], ['Montaggio', esc(f.montaggio)], ['Musiche', esc(f.musiche)], ['Scenografia', esc(f.scenografia)], ['Paese', esc(f.paesi)]]);
-  const ripresa = (ripresaRighe ? `<dl class="righe">${ripresaRighe}</dl>` : '') + (f.focus ? `<p class="testo">${esc(f.focus)}</p>` : '');
-  const curiosita = [f.curiosita, f.making].filter(Boolean).map(t => `<p class="testo">${esc(t)}</p>`).join('');
-  const critica = (f.piu||[]).length || (f.meno||[]).length ? `<dl class="critica">${(f.piu||[]).map(n => `<dt aria-label="Piaciuto">+</dt><dd>${esc(n)}</dd>`).join('')}${(f.meno||[]).map(n => `<dt aria-label="Non piaciuto">−</dt><dd>${esc(n)}</dd>`).join('')}</dl>` : '';
+  if (!f) { app.innerHTML = osd('■ Stop', '--:--:--') + `<div class="screen"><div class="noise"></div><p class="sig">No signal</p><p>Questo film non è nella selezione</p><p><a class="y" href="#">${OK} Torna alla settimana</a></p></div>`; vistaCorrente = 'vuoto'; dopo(); return; }
+  const fw = FILM.filter(x => x.settimana === f.settimana), pos = fw.indexOf(f) + 1;
+  const righe = arr => arr.filter(r => r[1]).map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  const regia = f.regia && f.regia.length ? `<p class="regista">${nomi(f.regia)}</p>
+      ${f.regia_frase ? `<p class="testo">${ricco(f.regia_frase)}</p>` : ''}
+      ${f.prima && f.prima.length ? `<dl class="righe quello" style="margin-top:12px"><dt>Quello di</dt><dd>${f.prima.map(p => (p.link ? ext(p.link, esc(p.titolo)) : esc(p.titolo)) + (p.anno ? ` <span class="an">${esc(p.anno)}</span>` : '')).join('<br>')}</dd></dl>` : ''}` : '';
+  const rr = righe([['Fotografia', esc(f.fotografia)], ['Camera', esc(f.camera)], ['Montaggio', esc(f.montaggio)], ['Musiche', esc(f.musiche)], ['Scenografia', esc(f.scenografia)], ['Paese', esc(f.paesi)]]);
+  const ripresa = (rr ? `<dl class="righe">${rr}</dl>` : '') + (f.focus ? `<p class="testo">${ricco(f.focus)}</p>` : '');
+  const curiosita = [f.curiosita, f.making].filter(Boolean).map(t => `<p class="testo">${ricco(t)}</p>`).join('');
+  const pm = (f.piu||[]).length || (f.meno||[]).length ? `<ul class="pm">${(f.piu||[]).map(n => `<li><span class="inv" aria-label="A favore">+</span><span>${ricco(n)}</span></li>`).join('')}${(f.meno||[]).map(n => `<li><span class="inv" aria-label="Contro">−</span><span>${ricco(n)}</span></li>`).join('')}</ul>` : '';
   const cast = (f.cast||[]).length ? `<ul class="voci">${f.cast.map(c => `<li>${c.link ? ext(c.link, esc(c.nome)) : esc(c.nome)}${c.ruolo ? ` <span class="ruolo">${esc(c.ruolo)}</span>` : ''}</li>`).join('')}</ul>` : '';
   let dove = '';
-  if (f.sala) dove = `<p class="dove">Al cinema dal ${f.data ? lab(d(f.data)) : ''}.</p><ul class="voci px">${CINEMA.map(([t,u]) => `<li>${ext(u, esc(t) + ' ▶')}</li>`).join('')}`;
-  else dove = `${f.dove ? `<p class="dove">${esc(f.dove)}.</p>` : ''}<ul class="voci px">${f.dove_link ? `<li>${ext(f.dove_link, 'Dove vederlo in streaming ▶')}</li>` : ''}`;
-  dove += `${f.lb ? `<li>${ext(f.lb, 'Segna su Letterboxd ▶')}</li>` : ''}</ul>`;
+  if (f.sala) dove = `<p class="testo">Al cinema dal ${f.data ? lab(d(f.data)) : ''}.</p><p class="link-ok">${CINEMA.map(([t,u]) => ext(u, OK + ' ' + esc(t))).join('')}`;
+  else dove = `${f.dove ? `<p class="testo">${esc(f.dove)}.</p>` : ''}<p class="link-ok">${f.dove_link ? ext(f.dove_link, OK + ' JustWatch') : ''}`;
+  dove += `${f.lb ? ext(f.lb, OK + ' Letterboxd') : ''}</p>`;
 
-  app.innerHTML = testata() + `
-    <a class="indietro px" href="#w-${f.settimana}">◀ Settimana del ${lab(d(f.settimana))}</a>
-    <article class="film">
-      <div class="col-loc"><div class="grande">${locandina(f)}</div></div>
-      <div class="col-testo">
-        <div class="riga1 px" style="margin-top:18px">${esc(f.anno)}${tags(f)}</div>
-        <h1 class="px glow">${esc(f.titolo)}</h1>
-        <div class="gen px">${esc((f.generi||[]).join(', '))}${f.durata ? ' · ' + esc(f.durata) : ''}</div>
-        ${f.minuti ? barra(f.minuti) : ''}
-        ${f.trama ? `<p class="frase">${esc(f.trama)}</p>` : ''}
-        ${f.filo ? `<div class="filo"><span class="seg" aria-label="Perché è qui">※</span><p>${esc(f.filo)}</p></div>` : ''}
-        ${sez('Regia', regia)}${sez('Ripresa', ripresa)}${sez('Curiosità', curiosita)}${sez('Critica', critica)}${sez('Cast', cast)}${sez('Dove vederlo', dove)}
-      </div>
-    </article>`;
+  app.innerHTML = osd('▶ Play', `CH ${String(pos).padStart(2,'0')}`) + `
+    <nav class="mrow" aria-label="Torna"><a href="#w-${f.settimana}">◀ ${dm(d(f.settimana))}</a><span></span><span>${pos} / ${fw.length}</span></nav>
+    <article>
+      ${locandina(f, 'grande', 'STOP')}
+      <div class="anno1">${esc(f.anno)}${tags(f)}</div>
+      <h1 class="t">${esc(f.titolo)}</h1>
+      ${f.generi && f.generi.length ? `<div class="gen">${esc(f.generi.join(', '))}</div>` : ''}
+      ${f.durata ? `<div class="gen">${esc(f.durata)}</div>` : ''}
+      ${f.minuti ? vol(f.minuti) : ''}
+      ${f.trama ? `<p class="testo" style="margin-top:12px">${ricco(f.trama)}</p>` : ''}
+      ${sez('※ Perché è qui', f.filo ? `<p class="testo">${ricco(f.filo)}</p>` : '')}
+      ${sez('Regia', regia)}${sez('Ripresa', ripresa)}${sez('Curiosità', curiosita)}${sez('', pm, 'Punti di forza e punti deboli')}${sez('Cast', cast)}${sez('Dove vederlo', dove)}
+    </article>` + piede();
+  vistaCorrente = 'film';
   window.scrollTo(0, 0);
-  arma();
+  dopo();
 }
 
-/* ---------- pagina anno ---------- */
+/* ---------- anno ---------- */
 function vistaAnno(){
   const anno = DATI.aggiornato.slice(0,4);
   const films = FILM.filter(f => meseDi(f.settimana).startsWith(anno));
@@ -304,85 +337,147 @@ function vistaAnno(){
   const top = films.filter(f => f.top).sort((a,b) => a.top - b.top).slice(0,10);
   const topId = new Set(top.map(f => f.id));
   const resto = films.filter(f => !topId.has(f.id));
-  const riga = (f, g=true) => `<li><a class="px" href="#f-${esc(f.id)}">${esc(f.titolo)}</a>${f.visto ? ' <span class="tag visto px">✓ Visto</span>' : ''}<span class="rr px">${nomiTesto(f.regia)}${g && f.generi ? ' · ' + esc(f.generi[0]) : ''}${f.durata ? ' · ' + esc(f.durata) : ''}</span></li>`;
-  // mesi dall'inizio dell'archivio al mese dell'ultimo aggiornamento
+  const riga = (f, g=true) => `<li><a href="#f-${esc(f.id)}">${esc(f.titolo)}${f.visto ? ' <span class="inv">✓ Visto</span>' : ''}<span class="rr">${nomiTesto(f.regia)}${g && f.generi ? ' · ' + esc(f.generi[0]) : ''}${f.durata ? ' · ' + esc(f.durata) : ''}</span></a></li>`;
   const ultimo = meseDi(DATI.aggiornato); const mesi = [];
   for (let m = INIZIO; m <= ultimo; ) { mesi.push(m); const [y,mm] = m.split('-').map(Number); m = mm === 12 ? `${y+1}-01` : `${y}-${String(mm+1).padStart(2,'0')}`; }
   const perMese = mesi.map(m => {
     const fm = resto.filter(f => meseDi(f.settimana) === m), n = films.filter(f => meseDi(f.settimana) === m).length;
-    return `<h3 class="gr px glow"><a href="#m-${m}">${esc(nomeMese(m).split(' ')[0])}</a><span>${n ? n + ' film' : 'dati in arrivo'}</span></h3>` +
-      (n ? `<ul class="la">${fm.map(f => riga(f)).join('')}</ul>` : `<p class="vuoto">La selezione di ${esc(nomeMese(m).split(' ')[0])} non è ancora stata fatta.</p>`);
+    return `<h2 class="sez-t"><a href="#m-${m}">${esc(MESI[+m.slice(5)-1])}</a> <span style="color:var(--sec)">${n ? n + ' film' : 'no signal'}</span></h2>` +
+      (n ? `<ul class="la">${fm.map(f => riga(f)).join('')}</ul>` : '');
   }).join('');
   const gruppi = {}; resto.forEach(f => (gruppi[(f.generi||['Altro'])[0]] ||= []).push(f));
-  const perGenere = Object.keys(gruppi).sort().map(g => `<h3 class="gr px glow">${esc(g)}<span>${gruppi[g].length} film</span></h3><ul class="la">${gruppi[g].map(f => riga(f, false)).join('')}</ul>`).join('');
-  const ultimoMese = mesi[mesi.length-1];
-  app.innerHTML = testata() + `
-    <h1 class="titolo-pag px inv">${anno}</h1>
-    <nav class="navmesi px" aria-label="Mesi"><a href="#m-${ultimoMese}">◀ ${esc(nomeMese(ultimoMese))}</a><span></span></nav>
-    <div class="cifre"><div><b>${films.length}</b><span>film</span></div><div><b>${ore(tot)}</b><span>ore di cinema</span></div><div><b>${films.filter(f => f.sala).length}</b><span>in sala</span></div></div>
-    ${top.length ? `<h2 class="et px inv">Top 10 dell'anno</h2><div class="top">${top.map(f => `<a class="tp" href="#f-${esc(f.id)}"><span class="loc">${locandina(f)}<span class="pz px inv">${String(f.top).padStart(2,'0')}</span></span><span class="tt px">${esc(f.titolo)}</span><span class="tr px">${nomiTesto(f.regia)}</span></a>`).join('')}</div>` : ''}
-    <div class="scelte modo px" role="group" aria-label="Ordina l'elenco"><button type="button" data-m="mese" aria-pressed="${modoAnno==='mese'}">Per mese</button><span class="sl" aria-hidden="true">/</span><button type="button" data-m="genere" aria-pressed="${modoAnno==='genere'}">Per genere</button></div>
-    <div class="elenco">${modoAnno === 'mese' ? perMese : perGenere}</div>` + piede();
-  app.querySelectorAll('.modo button').forEach(b => b.onclick = () => { modoAnno = b.dataset.m; vistaAnno(); });
-  arma();
+  const perGenere = Object.keys(gruppi).sort().map(g => `<h2 class="sez-t">${esc(g)} <span style="color:var(--sec)">${gruppi[g].length} film</span></h2><ul class="la">${gruppi[g].map(f => riga(f, false)).join('')}</ul>`).join('');
+  app.innerHTML = osd('▶ Play', '0:00:00') + testata() + `
+    <nav class="mrow" aria-label="Mesi"><a href="#m-${ultimo}">◀ ${MESI_B[+ultimo.slice(5)-1]}</a><h1 class="m">Anno ${anno}</h1><span></span></nav>
+    <div class="cifre"><div><span>Film</span><span>${films.length}</span></div><div><span>Ore di cinema</span><span>${tcMin(tot)}</span></div><div><span>In sala</span><span>${films.filter(f => f.sala).length}</span></div></div>
+    ${top.length ? sez('Top 10 dell\'anno', `<div class="top">${top.map(f => `<a href="#f-${esc(f.id)}">${locandina(f, 'loc', 'CH ' + String(f.top).padStart(2,'0'))}<span class="pz inv">${String(f.top).padStart(2,'0')}</span><span class="tt">${esc(f.titolo)}</span><span class="tr">${nomiTesto(f.regia)}</span></a>`).join('')}</div>`) : ''}
+    <div class="opt" role="group" aria-label="Ordina l'elenco" style="margin-top:calc(var(--lh)*1.5)"><button type="button" data-m="mese" aria-pressed="${modoAnno==='mese'}">Per mese</button><span class="sl">/</span><button type="button" data-m="genere" aria-pressed="${modoAnno==='genere'}">Per genere</button></div>
+    <div class="lista" data-tot="${tot*60}">${modoAnno === 'mese' ? perMese : perGenere}</div>` + piede();
+  app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { modoAnno = b.dataset.m; vistaAnno(); });
+  vistaCorrente = 'anno';
+  dopo();
 }
 
-/* ---------- tendina DV: la locandina sale dal basso a scatti, con macroblocchi ---------- */
-function tendina(img){
-  if (RM || !img.complete || !img.naturalWidth) return;
-  const box = img.parentElement; box.querySelectorAll('.tend').forEach(c => c.remove());
-  const W = box.clientWidth, H = box.clientHeight; if (!W) return;
-  const c = document.createElement('canvas'); c.className = 'tend'; c.width = W; c.height = H; box.appendChild(c);
-  const x = c.getContext('2d'), N = 6, band = Math.ceil(H/N), MB = W > 200 ? 24 : 12;
-  const tmp = document.createElement('canvas'); tmp.width = Math.ceil(W/MB); tmp.height = Math.ceil(H/MB);
-  tmp.getContext('2d').drawImage(img, 0, 0, tmp.width, tmp.height); x.imageSmoothingEnabled = false;
-  const blu = getComputedStyle(document.documentElement).getPropertyValue('--blu').trim();
-  x.fillStyle = blu; x.fillRect(0, 0, W, H); let k = 0;
-  (function passo(){
-    if (k > N) { c.remove(); return; }
-    x.fillStyle = blu; x.fillRect(0, 0, W, H - k*band);
-    x.clearRect(0, H - (k-1)*band, W, (k-1)*band);
-    if (k > 0) {
-      const y = Math.max(0, H - k*band);
-      x.save(); x.beginPath(); x.rect(0, y, W, band); x.clip(); x.drawImage(tmp, 0, 0, tmp.width*MB, tmp.height*MB); x.restore();
-      x.fillStyle = blu; for (let i = 0; i < W; i += MB) if (Math.random() < .45) x.fillRect(i, y, MB, MB/1.5);
-    }
-    k++; setTimeout(passo, 90);
-  })();
+/* ---------- dopo ogni vista: animazioni e comandi ---------- */
+const ST = () => document.getElementById('st');
+let osserva = null, volObs = null;
+function dopo(){
+  // locandine: disturbo + STOP, poi PLAY ed entrata con scatto di tracking
+  osserva && osserva.disconnect();
+  const entra = box => { const img = box.querySelector('img'); if (!img) return;
+    const go = () => { const o = box.querySelector('.o'); if (o) o.textContent = 'PLAY ▶'; setTimeout(() => box.classList.add('in'), RM ? 0 : 180); };
+    if (img.complete && img.naturalWidth) go(); else { img.addEventListener('load', go, {once:true}); img.addEventListener('error', () => box.classList.add('in'), {once:true}); } };
+  const boxes = app.querySelectorAll('.loc:not(.in), .grande:not(.in)');
+  if ('IntersectionObserver' in window) { osserva = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { osserva.unobserve(e.target); entra(e.target); } }), {rootMargin: '200px 0px'}); boxes.forEach(b => osserva.observe(b)); }
+  else boxes.forEach(entra);
+  // barre della durata: si caricano quando entrano nello schermo
+  volObs && volObs.disconnect();
+  const vols = app.querySelectorAll('.vol');
+  if ('IntersectionObserver' in window && !RM) { volObs = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('on', e.isIntersecting)), {threshold: 1}); vols.forEach(v => volObs.observe(v)); }
+  else vols.forEach(v => v.classList.add('on'));
+  // avanzamento del mese: tacche che salgono + testina; tocco = pausa
+  const P = app.querySelector('.prog');
+  if (P) { P.classList.add('go'); const tog = () => { const on = P.classList.toggle('fermo'); P.setAttribute('aria-pressed', on); ST().textContent = on ? '‖ Pause' : '▶ Play'; };
+    P.onclick = tog; P.onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); tog(); } }; }
+  // tasti del piede
+  app.querySelectorAll('.k[data-k]').forEach(b => b.onclick = () => comando(b.dataset.k));
+  sel = -1; aggiornaTc();
 }
-const osserva = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
-  if (!e.isIntersecting) return; osserva.unobserve(e.target);
-  const img = e.target; if (img.complete) tendina(img); else img.addEventListener('load', () => tendina(img), {once:true});
-}), {threshold: .35}) : null;
-function arma(){
-  if (!osserva || RM) return;
-  app.querySelectorAll('.loc img, .grande img').forEach(i => osserva.observe(i));
-  app.querySelectorAll('.grande').forEach(g => g.addEventListener('click', () => tendina(g.querySelector('img'))));
+
+/* ---------- contatore: scorrere = far andare il nastro ---------- */
+let veloce = false;
+function aggiornaTc(){
+  const tc = document.getElementById('tc'), L = app.querySelector('.lista[data-tot]');
+  if (!tc || !L || veloce) return;
+  const r = app.getBoundingClientRect(), p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - innerHeight)));
+  tc.textContent = fmt(p * +L.dataset.tot);
+}
+let raf = 0; addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; aggiornaTc(); }); }, {passive:true});
+
+/* ---------- FF / REW quando cambi settimana ---------- */
+function avvolgi(avanti){
+  const st = ST(), tc = document.getElementById('tc'), L = app.querySelector('.lista[data-tot]');
+  if (!st || RM) return;
+  st.textContent = avanti ? '▶▶ FF' : '◀◀ REW'; if (!tc || !L) { setTimeout(() => { if (ST()) ST().textContent = '▶ Play'; }, 500); return; }
+  veloce = true; const T = +L.dataset.tot; let s = avanti ? 0 : T, k = 0;
+  const iv = setInterval(() => { k++; s += (avanti ? 1 : -1) * T/12; tc.textContent = fmt(Math.min(T, Math.max(0, s)));
+    if (k >= 12) { clearInterval(iv); veloce = false; if (ST()) ST().textContent = '▶ Play'; aggiornaTc(); } }, 45);
+}
+
+/* ---------- ▲ ▼ OK e M ---------- */
+let sel = -1;
+function primo(C){ const k = C.findIndex(c => c.getBoundingClientRect().bottom > 80); return k < 0 ? 0 : k; }
+function comando(k){
+  const C = [...app.querySelectorAll('.card')];
+  if (k === 'ok') { if (sel >= 0 && C[sel]) location.hash = 'f-' + C[sel].dataset.id; return; }
+  if (!C.length) return;
+  sel = sel < 0 ? primo(C) : Math.max(0, Math.min(C.length-1, sel + (k === 'giu' ? 1 : -1)));
+  C.forEach((c,j) => c.classList.toggle('sel', j === sel));
+  C[sel].focus({preventScroll:true}); C[sel].scrollIntoView({block:'center', behavior: RM ? 'auto' : 'smooth'});
+}
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input,textarea,select') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'ArrowDown' && app.querySelector('.card')) { e.preventDefault(); comando('giu'); }
+  else if (e.key === 'ArrowUp' && app.querySelector('.card')) { e.preventDefault(); comando('su'); }
+  else if (e.key === 'Enter' && sel >= 0 && e.target.classList.contains('card')) { e.preventDefault(); comando('ok'); }
+  else if (e.key === 'm' || e.key === 'M') location.hash = 'anno';
+});
+
+/* ---------- PAUSE: pagina ferma o scheda nascosta ---------- */
+let idle;
+function sveglia(){ const st = ST(); if (st && st.textContent === '‖ Pause' && !(app.querySelector('.prog.fermo'))) st.textContent = '▶ Play';
+  clearTimeout(idle); idle = setTimeout(() => { const s = ST(); if (s && vistaCorrente !== 'vuoto') s.textContent = '‖ Pause'; }, PAUSA_MS); }
+['scroll','pointermove','keydown','touchstart'].forEach(ev => addEventListener(ev, sveglia, {passive:true}));
+document.addEventListener('visibilitychange', () => { const s = ST(); if (!s || vistaCorrente === 'vuoto') return; if (document.hidden) s.textContent = '‖ Pause'; else sveglia(); });
+
+/* ---------- ● REC: settimana nuova dall'ultima visita ---------- */
+let vistaPrima = null;
+try { vistaPrima = localStorage.getItem('fa-vista'); } catch (e) {}
+function settimanaNuova(){ return DATI && vistaPrima !== DATI.aggiornato ? DATI.aggiornato : null; }
+function rec(){
+  if (!settimanaNuova()) return;
+  const st = ST(); if (st) { st.textContent = '● Rec'; st.classList.add('rec'); setTimeout(() => { const s = ST(); if (s) { s.classList.remove('rec'); if (s.textContent === '● Rec') s.textContent = '▶ Play'; } }, 2000); }
+  try { localStorage.setItem('fa-vista', DATI.aggiornato); } catch (e) {}
 }
 
 /* ---------- router: #w-AAAA-MM-GG, #m-AAAA-MM, #f-id, #anno ---------- */
 function vai(){
-  const h = location.hash.slice(1);
-  const ultima = DATI.aggiornato;
+  const h = location.hash.slice(1), ultima = DATI.aggiornato;
   if (h.startsWith('f-')) return vistaFilm(h.slice(2));
   if (h === 'anno') return vistaAnno();
   if (/^m-\d{4}-\d{2}$/.test(h)) return vistaMese(h.slice(2), 'mese');
   if (/^w-\d{4}-\d{2}-\d{2}$/.test(h) && FILM.some(f => f.settimana === h.slice(2))) return vistaMese(meseDi(h.slice(2)), h.slice(2));
-  vistaMese(meseDi(ultima), ultima);       // apertura: l'ultima settimana aggiornata
+  vistaMese(meseDi(ultima), ultima);            // apertura: l'ultima settimana aggiornata
 }
+const chiave = h => { h = (h||'').slice(1); if (/^w-/.test(h)) return h.slice(2); if (/^m-/.test(h)) return h.slice(2) + '-00'; return null; };
 let ultimoHash = null;
 window.addEventListener('hashchange', () => {
   const vecchio = ultimoHash; ultimoHash = location.hash; vai();
-  if (!location.hash.startsWith('#f-') && !(vecchio || '').startsWith('#f-')) window.scrollTo(0, 0);
+  const a = chiave(vecchio) || (vecchio ? null : DATI.aggiornato), b = chiave(location.hash);
+  if (a && b && a !== b) avvolgi(b > a);
+  if (location.hash.startsWith('#f-')) { const c = document.getElementById('ch'); }
+  else if (!(vecchio || '').startsWith('#f-')) window.scrollTo(0, 0);
 });
 
+/* ---------- caricamento: schermo blu, STOP, nastro che si allinea, PLAY ---------- */
+const boot = document.getElementById('boot');
+let giaVisto = false; try { giaVisto = sessionStorage.getItem('fa-boot') === '1'; sessionStorage.setItem('fa-boot', '1'); } catch (e) {}
+const t0 = performance.now(), minimo = (RM || giaVisto) ? 0 : 900;
+function play(){
+  if (RM || giaVisto) { boot.remove(); rec(); return; }
+  const bc = document.getElementById('bcnt'), btc = document.getElementById('btc');
+  bc.classList.remove('alline'); bc.textContent = '00:00'; document.getElementById('bs').textContent = 'PLAY ▶'; boot.classList.add('play');
+  let t = 0; const iv = setInterval(() => { t++; btc.textContent = '0:00:' + String(t).padStart(2,'0'); }, 120);
+  setTimeout(() => { clearInterval(iv); boot.classList.add('cut'); setTimeout(() => { boot.remove(); rec(); }, 160); }, 700);
+}
 fetch('dati.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => {
-  DATI = j; FILM = j.film; ultimoHash = location.hash; vai();
+  DATI = j; FILM = j.film; ultimoHash = location.hash; vai(); sveglia();
+  setTimeout(play, Math.max(0, minimo - (performance.now() - t0)));
 }).catch(() => {
-  app.innerHTML = testata() + `<p class="vuoto px">Non riesco a caricare la selezione. Ricarica la pagina tra poco.</p>`;
+  boot.remove();
+  app.innerHTML = osd('■ Stop', '--:--:--') + testata() + `<div class="screen"><div class="noise"></div><p class="sig">Tracking error</p><div class="trk2"><i></i></div><p><button class="y" type="button" onclick="location.reload()">${OK} Riprova</button></p></div>`;
 });
 })();
 </script>
-
 </body>
 </html>
