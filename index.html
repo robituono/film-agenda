@@ -117,9 +117,13 @@ h2.t{font-size:var(--m);line-height:1;font-weight:400;margin-top:4px}
 .apri{grid-column:1/-1;justify-self:start;margin-top:8px;color:var(--gia)}
 
 /* ---- comandi gialli (OK SCHEDA, link, ◀ ▶): negativo al passaggio, lampo bianco alla pressione ---- */
-.apri,.link-ok a,.mrow>a,.y{padding:0 3px;margin-left:-3px}
-.apri:hover,.apri:focus-visible,.link-ok a:hover,.link-ok a:focus-visible,.mrow>a:hover,.mrow>a:focus-visible,.y:hover,.y:focus-visible,.card.sel .apri{background:var(--gia);color:var(--blu);outline:none}
-.apri:active,.link-ok a:active,.mrow>a:active,.y:active{background:var(--bia);color:var(--blu)}
+.mrow>a,.y{padding:0 3px;margin-left:-3px}
+.mrow>a:hover,.mrow>a:focus-visible,.y:hover,.y:focus-visible{background:var(--gia);color:var(--blu);outline:none}
+.mrow>a:active,.y:active{background:var(--bia);color:var(--blu)}
+/* OK come il tasto del box in fondo: si riempie solo il riquadro */
+.apri,.link-ok a{outline:none}
+.apri:hover .ok,.apri:focus-visible .ok,.link-ok a:hover .ok,.link-ok a:focus-visible .ok,.card.sel .apri .ok{background:var(--gia);color:var(--blu)}
+.apri:active .ok,.link-ok a:active .ok{background:var(--bia);border-color:var(--bia);color:var(--blu)}
 .mrow>a:last-child{margin-left:0;margin-right:-3px}
 /* ---- scheda film ---- */
 .grande{display:block;position:relative;width:100%;aspect-ratio:2/3;border:var(--ln) solid var(--bia);background:var(--scr);overflow:hidden;margin-top:var(--lh)}
