@@ -48,6 +48,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-t
 #ch:not(:empty){margin-right:12px}
 #tc{font-variant-numeric:tabular-nums}
 .osd .dx{display:flex;align-items:baseline;gap:12px}
+.home{padding:0 4px;margin-left:-4px}.home:hover,.home:focus-visible{background:var(--bia);color:var(--blu);outline:none}.home:hover #st.rec{color:var(--rec)}
 .menu{background:var(--gri);color:var(--box);-webkit-text-stroke:.55px currentColor;paint-order:stroke fill;padding:0 5px}
 .menu:hover{background:var(--bia)}
 
@@ -115,6 +116,11 @@ h2.t{font-size:var(--m);line-height:1;font-weight:400;margin-top:4px}
 .testo b,.plot b{font-weight:700}
 .apri{grid-column:1/-1;justify-self:start;margin-top:8px;color:var(--gia)}
 
+/* ---- comandi gialli (OK SCHEDA, link, ◀ ▶): negativo al passaggio, lampo bianco alla pressione ---- */
+.apri,.link-ok a,.mrow>a,.y{padding:0 3px;margin-left:-3px}
+.apri:hover,.apri:focus-visible,.link-ok a:hover,.link-ok a:focus-visible,.mrow>a:hover,.mrow>a:focus-visible,.y:hover,.y:focus-visible,.card.sel .apri{background:var(--gia);color:var(--blu);outline:none}
+.apri:active,.link-ok a:active,.mrow>a:active,.y:active{background:var(--bia);color:var(--blu)}
+.mrow>a:last-child{margin-left:0;margin-right:-3px}
 /* ---- scheda film ---- */
 .grande{display:block;position:relative;width:100%;aspect-ratio:2/3;border:var(--ln) solid var(--bia);background:var(--scr);overflow:hidden;margin-top:var(--lh)}
 .grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
@@ -221,7 +227,7 @@ const BREVE = {Documentario:'Doc', Fantascienza:'Sci-fi', Animazione:'Anim.'};
 
 /* ---------- pezzi comuni ---------- */
 // MENU porta all'anno; sulla pagina dell'anno diventa EXIT e riporta al mese
-const osd = (sx, dx, esci) => `<div class="osd"><span aria-hidden="true"><span class="ic"></span><span id="st">${sx}</span></span><span class="dx">${esci ? `<a class="menu" href="#m-${DATI ? meseDi(DATI.aggiornato) : ''}" aria-label="Esci dall'anno, torna al mese">Exit</a>` : `<a class="menu" href="#anno" aria-label="Menu: l'anno">Menu</a>`}<span aria-hidden="true"><span id="ch"></span><span id="tc">${dx}</span></span></span></div>`;
+const osd = (sx, dx, esci) => `<div class="osd"><a class="home" href="${DATI ? '#w-' + DATI.aggiornato : '#'}" aria-label="Torna all'ultima settimana"><span class="ic" aria-hidden="true"></span><span id="st" aria-hidden="true">${sx}</span></a><span class="dx">${esci ? `<a class="menu" href="#m-${DATI ? meseDi(DATI.aggiornato) : ''}" aria-label="Esci dall'anno, torna al mese">Exit</a>` : `<a class="menu" href="#anno" aria-label="Menu: l'anno">Menu</a>`}<span aria-hidden="true"><span id="ch"></span><span id="tc">${dx}</span></span></span></div>`;
 const testata = () => `<div class="box testata" role="banner"><span>Film Agenda</span><span>Curated Selection</span><span>by Robi Tuono</span></div>`;
 const piede = () => `<div class="box piede"><span>Scegli con (<button class="k" data-k="su" aria-label="Film precedente">▲</button><button class="k" data-k="giu" aria-label="Film successivo">▼</button>) e <button class="k" data-k="ok" aria-label="Apri il film scelto">${OK}</button></span><span>Premi (<a class="k" href="#anno">Menu</a>) per l'anno</span></div>
   <p class="cred">Dati e locandine da TMDB. Questo prodotto usa l'API di TMDB ma non è approvato né certificato da TMDB. Disponibilità in streaming da JustWatch.</p>`;
