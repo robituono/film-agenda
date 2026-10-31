@@ -127,6 +127,18 @@ h2.t{font-size:var(--m);line-height:1;font-weight:400;margin-top:4px}
 .apri:hover .ok,.apri:focus-visible .ok,.link-ok a:hover .ok,.link-ok a:focus-visible .ok,.card.sel .apri .ok{background:var(--gia);color:var(--blu)}
 .apri:active .ok,.link-ok a:active .ok{background:var(--bia);border-color:var(--bia);color:var(--blu)}
 .mrow>a:last-child{margin-left:0;margin-right:-3px}
+/* ---- spunta VISTO: riquadro quadrato, dentro compare la V ---- */
+.azioni{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.azioni .apri{margin-top:0}
+.vb{display:inline-flex;align-items:center;gap:8px;color:var(--sec);outline:none;white-space:nowrap}
+.vb .vt{position:relative;top:2px}
+.vb .vbox{width:18px;height:18px;border:var(--ln) solid var(--bia);display:inline-flex;align-items:center;justify-content:center;font-size:16px;line-height:1;color:var(--bia);padding-top:1px}
+.vb[aria-checked=true]{color:var(--bia)}
+.vb[aria-checked=true] .vbox::after{content:"V"}
+.vb:hover .vbox,.vb:focus-visible .vbox{background:var(--bia);color:var(--blu)}
+.vb:active .vbox{background:var(--gia);border-color:var(--gia);color:var(--blu)}
+.vb.solo{margin-top:12px}
+.vmini{display:inline-block;border:var(--ln) solid var(--bia);font-size:14px;line-height:14px;padding:1px 2px 0;margin-left:8px;vertical-align:2px}
 /* ---- scheda film ---- */
 .grande{display:block;position:relative;width:100%;aspect-ratio:2/3;border:var(--ln) solid var(--bia);background:var(--scr);overflow:hidden;margin-top:var(--lh)}
 .grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
@@ -229,6 +241,15 @@ const ext = (href, txt) => `<a href="${esc(href)}" target="_blank" rel="noopener
 const nomi = arr => (arr||[]).map(p => p.link ? ext(p.link, esc(p.nome)) : esc(p.nome)).join(', ');
 const nomiTesto = arr => (arr||[]).map(p => esc(p.nome)).join(', ');
 const OK = '<span class="ok">OK</span>';
+// VISTO: salvato nel browser di chi lo spunta (ognuno ha le sue spunte)
+let VISTI = new Set(); try { VISTI = new Set(JSON.parse(localStorage.getItem('fa-visti') || '[]')); } catch (e) {}
+const spunta = (f, cls='') => `<button type="button" class="vb ${cls}" role="checkbox" aria-checked="${VISTI.has(f.id)}" data-v="${esc(f.id)}" aria-label="Visto: ${esc(f.titolo)}"><span class="vbox" aria-hidden="true"></span><span class="vt">Visto</span></button>`;
+function segna(id){
+  VISTI.has(id) ? VISTI.delete(id) : VISTI.add(id);
+  try { localStorage.setItem('fa-visti', JSON.stringify([...VISTI])); } catch (e) {}
+  document.querySelectorAll(`.vb[data-v="${CSS.escape(id)}"]`).forEach(b => b.setAttribute('aria-checked', VISTI.has(id)));
+}
+document.addEventListener('click', e => { const b = e.target.closest('.vb'); if (b) { e.preventDefault(); segna(b.dataset.v); } });
 const BREVE = {Documentario:'Doc', Fantascienza:'Sci-fi', Animazione:'Anim.'};
 
 /* ---------- pezzi comuni ---------- */
@@ -256,7 +277,7 @@ function card(f, i){
       ${f.minuti ? vol(f.minuti) : ''}
     </div>
     ${f.trama ? `<p class="plot">${ricco(f.trama)}</p>` : ''}
-    <a class="apri" href="#f-${esc(f.id)}">${OK} Scheda</a>
+    <div class="azioni"><a class="apri" href="#f-${esc(f.id)}">${OK} Scheda</a>${spunta(f)}</div>
   </article>`;
 }
 
@@ -354,6 +375,7 @@ function vistaFilm(id){
       ${f.generi && f.generi.length ? `<div class="gen">${esc(f.generi.join(', '))}</div>` : ''}
       ${f.durata ? `<div class="gen">${esc(f.durata)}</div>` : ''}
       ${f.minuti ? vol(f.minuti) : ''}
+      ${spunta(f, 'solo')}
       ${f.trama ? `<p class="testo" style="margin-top:12px">${ricco(f.trama)}</p>` : ''}
       ${sez('※ Perché è qui', f.filo ? `<p class="testo">${ricco(f.filo)}</p>` : '')}
       ${sez('Regia', regia)}${sez('Ripresa', ripresa)}${sez('Curiosità', curiosita)}${sez('', pm, 'Punti di forza e punti deboli')}${sez('Cast', cast)}${sez('Dove vederlo', dove)}
@@ -371,7 +393,7 @@ function vistaAnno(){
   const top = films.filter(f => f.top).sort((a,b) => a.top - b.top).slice(0,10);
   const topId = new Set(top.map(f => f.id));
   const resto = films.filter(f => !topId.has(f.id));
-  const riga = (f, g=true) => `<li><a href="#f-${esc(f.id)}">${esc(f.titolo)}${f.visto ? ' <span class="inv">✓ Visto</span>' : ''}<span class="rr">${nomiTesto(f.regia)}${g && f.generi ? ' · ' + esc(f.generi[0]) : ''}${f.durata ? ' · ' + esc(f.durata) : ''}</span></a></li>`;
+  const riga = (f, g=true) => `<li><a href="#f-${esc(f.id)}">${esc(f.titolo)}${VISTI.has(f.id) ? ' <span class="vmini" aria-label="visto">V</span>' : ''}<span class="rr">${nomiTesto(f.regia)}${g && f.generi ? ' · ' + esc(f.generi[0]) : ''}${f.durata ? ' · ' + esc(f.durata) : ''}</span></a></li>`;
   const ultimo = meseDi(DATI.aggiornato); const mesi = [];
   for (let m = INIZIO; m <= ultimo; ) { mesi.push(m); const [y,mm] = m.split('-').map(Number); m = mm === 12 ? `${y+1}-01` : `${y}-${String(mm+1).padStart(2,'0')}`; }
   const perMese = mesi.map(m => {
@@ -384,7 +406,7 @@ function vistaAnno(){
   app.innerHTML = osd('▶ Play', '0:00:00', true) + testata() + `
     <nav class="mrow" aria-label="Mesi"><a href="#m-${ultimo}">◀ ${MESI_B[+ultimo.slice(5)-1]}</a><h1 class="m">Anno ${anno}</h1><span></span></nav>
     <div class="cifre"><div><span>Film</span><span>${films.length}</span></div><div><span>Ore di cinema</span><span>${tcMin(tot)}</span></div><div><span>In sala</span><span>${films.filter(f => f.sala).length}</span></div></div>
-    ${top.length ? sez('Top 10 dell\'anno', `<div class="top">${top.map(f => `<a href="#f-${esc(f.id)}">${locandina(f, 'loc', 'CH ' + String(f.top).padStart(2,'0'))}<span class="pz inv">${String(f.top).padStart(2,'0')}</span><span class="tt">${esc(f.titolo)}</span><span class="tr">${nomiTesto(f.regia)}</span></a>`).join('')}</div>`) : ''}
+    ${top.length ? sez('Top 10 dell\'anno', `<div class="top">${top.map(f => `<a href="#f-${esc(f.id)}">${locandina(f, 'loc', 'CH ' + String(f.top).padStart(2,'0'))}<span class="pz inv">${String(f.top).padStart(2,'0')}</span><span class="tt">${esc(f.titolo)}${VISTI.has(f.id) ? ' <span class="vmini" aria-label="visto">V</span>' : ''}</span><span class="tr">${nomiTesto(f.regia)}</span></a>`).join('')}</div>`) : ''}
     <div class="opt" role="group" aria-label="Ordina l'elenco" style="margin-top:calc(var(--lh)*1.5)"><button type="button" data-m="mese" aria-pressed="${modoAnno==='mese'}">Per mese</button><span class="sl">/</span><button type="button" data-m="genere" aria-pressed="${modoAnno==='genere'}">Per genere</button></div>
     <div class="lista" data-tot="${tot*60}">${modoAnno === 'mese' ? perMese : perGenere}</div>` + piede();
   app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { modoAnno = b.dataset.m; vistaAnno(); });
@@ -454,6 +476,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown' && app.querySelector('.card')) { e.preventDefault(); comando('giu'); }
   else if (e.key === 'ArrowUp' && app.querySelector('.card')) { e.preventDefault(); comando('su'); }
   else if (e.key === 'Enter' && sel >= 0 && e.target.classList.contains('card')) { e.preventDefault(); comando('ok'); }
+  else if ((e.key === 'v' || e.key === 'V') && sel >= 0) { const C = app.querySelectorAll('.card'); if (C[sel]) segna(C[sel].dataset.id); }
   else if (e.key === 'm' || e.key === 'M') location.hash = 'anno';
 });
 
