@@ -134,7 +134,7 @@ h2.t{font-size:var(--m);line-height:1;font-weight:400;margin-top:4px}
 .vb .vt{position:relative;top:2px}
 .vb .vbox{width:18px;height:18px;border:var(--ln) solid var(--bia);display:inline-flex;align-items:center;justify-content:center;font-size:16px;line-height:1;color:var(--bia);padding-top:1px}
 .vb[aria-checked=true]{color:var(--bia)}
-.vb[aria-checked=true] .vbox::after{content:"V"}
+.vb[aria-checked=true] .vbox::after{content:"X"}
 .vb:hover .vbox,.vb:focus-visible .vbox{background:var(--bia);color:var(--blu)}
 .vb:active .vbox{background:var(--gia);border-color:var(--gia);color:var(--blu)}
 .vb.solo{margin-top:12px}
@@ -393,7 +393,7 @@ function vistaAnno(){
   const top = films.filter(f => f.top).sort((a,b) => a.top - b.top).slice(0,10);
   const topId = new Set(top.map(f => f.id));
   const resto = films.filter(f => !topId.has(f.id));
-  const riga = (f, g=true) => `<li><a href="#f-${esc(f.id)}">${esc(f.titolo)}${VISTI.has(f.id) ? ' <span class="vmini" aria-label="visto">V</span>' : ''}<span class="rr">${nomiTesto(f.regia)}${g && f.generi ? ' · ' + esc(f.generi[0]) : ''}${f.durata ? ' · ' + esc(f.durata) : ''}</span></a></li>`;
+  const riga = (f, g=true) => `<li><a href="#f-${esc(f.id)}">${esc(f.titolo)}${VISTI.has(f.id) ? ' <span class="vmini" aria-label="visto">X</span>' : ''}<span class="rr">${nomiTesto(f.regia)}${g && f.generi ? ' · ' + esc(f.generi[0]) : ''}${f.durata ? ' · ' + esc(f.durata) : ''}</span></a></li>`;
   const ultimo = meseDi(DATI.aggiornato); const mesi = [];
   for (let m = INIZIO; m <= ultimo; ) { mesi.push(m); const [y,mm] = m.split('-').map(Number); m = mm === 12 ? `${y+1}-01` : `${y}-${String(mm+1).padStart(2,'0')}`; }
   const perMese = mesi.map(m => {
@@ -406,7 +406,7 @@ function vistaAnno(){
   app.innerHTML = osd('▶ Play', '0:00:00', true) + testata() + `
     <nav class="mrow" aria-label="Mesi"><a href="#m-${ultimo}">◀ ${MESI_B[+ultimo.slice(5)-1]}</a><h1 class="m">Anno ${anno}</h1><span></span></nav>
     <div class="cifre"><div><span>Film</span><span>${films.length}</span></div><div><span>Ore di cinema</span><span>${tcMin(tot)}</span></div><div><span>In sala</span><span>${films.filter(f => f.sala).length}</span></div></div>
-    ${top.length ? sez('Top 10 dell\'anno', `<div class="top">${top.map(f => `<a href="#f-${esc(f.id)}">${locandina(f, 'loc', 'CH ' + String(f.top).padStart(2,'0'))}<span class="pz inv">${String(f.top).padStart(2,'0')}</span><span class="tt">${esc(f.titolo)}${VISTI.has(f.id) ? ' <span class="vmini" aria-label="visto">V</span>' : ''}</span><span class="tr">${nomiTesto(f.regia)}</span></a>`).join('')}</div>`) : ''}
+    ${top.length ? sez('Top 10 dell\'anno', `<div class="top">${top.map(f => `<a href="#f-${esc(f.id)}">${locandina(f, 'loc', 'CH ' + String(f.top).padStart(2,'0'))}<span class="pz inv">${String(f.top).padStart(2,'0')}</span><span class="tt">${esc(f.titolo)}${VISTI.has(f.id) ? ' <span class="vmini" aria-label="visto">X</span>' : ''}</span><span class="tr">${nomiTesto(f.regia)}</span></a>`).join('')}</div>`) : ''}
     <div class="opt" role="group" aria-label="Ordina l'elenco" style="margin-top:calc(var(--lh)*1.5)"><button type="button" data-m="mese" aria-pressed="${modoAnno==='mese'}">Per mese</button><span class="sl">/</span><button type="button" data-m="genere" aria-pressed="${modoAnno==='genere'}">Per genere</button></div>
     <div class="lista" data-tot="${tot*60}">${modoAnno === 'mese' ? perMese : perGenere}</div>` + piede();
   app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { modoAnno = b.dataset.m; vistaAnno(); });
