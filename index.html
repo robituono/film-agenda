@@ -266,7 +266,7 @@ function vistaMese(ym, sett){
   const giorni = new Date(+ym.slice(0,4), +ym.slice(5), 0).getDate();
   const ultima = DATI.aggiornato, inCorso = meseDi(ultima) === ym;
   const fino = inCorso ? Math.min(giorni, Math.max(1, d(ultima).getMonth()+1 === +ym.slice(5) ? d(ultima).getDate() : giorni)) : giorni;
-  const nuova = settimanaNuova();
+  const nuova = DATI.aggiornato;          // ● sempre sulla settimana in corso (in registrazione)
   let corpo = '', n = 0;
   if (sett === 'mese') settimane.forEach(w => {
     const fw = mostra.filter(f => f.settimana === w); if (!fw.length) return;
@@ -279,7 +279,7 @@ function vistaMese(ym, sett){
     <div class="prog" role="button" tabindex="0" aria-pressed="false" aria-label="Metti in pausa la testina del mese">
       <span>1.${+ym.slice(5)}</span><span class="seg" aria-hidden="true"><i style="width:${(fino/giorni*100).toFixed(1)}%"></i></span><span>${giorni}.${+ym.slice(5)}</span></div>
     <nav class="opt" aria-label="Settimane">
-      ${settimane.map(w => `<a href="#w-${w}" ${sett===w?'aria-current="page"':''}>${w === nuova ? '<span class="rec-dot" aria-label="nuova">●</span>' : ''}${dm(d(w))}</a>`).join('')}
+      ${settimane.map(w => `<a href="#w-${w}" ${sett===w?'aria-current="page"':''}>${w === nuova ? '<span class="rec-dot" aria-label="settimana in corso">●</span>' : ''}${dm(d(w))}</a>`).join('')}
     </nav>
     <div class="opt" role="group" aria-label="Genere">
       ${['tutti', ...generi].map(g => `<button type="button" data-g="${esc(g)}" aria-pressed="${filtro===g}" aria-label="${esc(g)}">${esc(BREVE[g] || g)}</button>`).join('')}
