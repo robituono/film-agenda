@@ -44,6 +44,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-t
 #st.rec{color:var(--rec)}
 #ch:not(:empty){margin-right:12px}
 #tc{font-variant-numeric:tabular-nums}
+.osd .dx{display:flex;align-items:baseline;gap:12px}
+.menu{background:var(--gri);color:var(--box);-webkit-text-stroke:.55px currentColor;paint-order:stroke fill;padding:0 5px}
+.menu:hover{background:var(--bia)}
 
 /* ---- box (intestazione e piede) ---- */
 .box{background:var(--gri);color:var(--box);-webkit-text-stroke:.55px currentColor;paint-order:stroke fill;padding:6px 8px 4px;margin-top:var(--lh)}
@@ -214,7 +217,8 @@ const OK = '<span class="ok">OK</span>';
 const BREVE = {Documentario:'Doc', Fantascienza:'Sci-fi', Animazione:'Anim.'};
 
 /* ---------- pezzi comuni ---------- */
-const osd = (sx, dx) => `<div class="osd" aria-hidden="true"><span><span class="ic"></span><span id="st">${sx}</span></span><span><span id="ch"></span><span id="tc">${dx}</span></span></div>`;
+// MENU porta all'anno; sulla pagina dell'anno diventa EXIT e riporta al mese
+const osd = (sx, dx, esci) => `<div class="osd"><span aria-hidden="true"><span class="ic"></span><span id="st">${sx}</span></span><span class="dx">${esci ? `<a class="menu" href="#m-${DATI ? meseDi(DATI.aggiornato) : ''}" aria-label="Esci dall'anno, torna al mese">Exit</a>` : `<a class="menu" href="#anno" aria-label="Menu: l'anno">Menu</a>`}<span aria-hidden="true"><span id="ch"></span><span id="tc">${dx}</span></span></span></div>`;
 const testata = () => `<div class="box testata" role="banner"><span>Film Agenda</span><span>Curated Selection</span><span>by Robi Tuono</span></div>`;
 const piede = () => `<div class="box piede"><span>Scegli con (<button class="k" data-k="su" aria-label="Film precedente">▲</button><button class="k" data-k="giu" aria-label="Film successivo">▼</button>) e <button class="k" data-k="ok" aria-label="Apri il film scelto">${OK}</button></span><span>Premi (<a class="k" href="#anno">Menu</a>) per l'anno</span></div>
   <p class="cred">Dati e locandine da TMDB. Questo prodotto usa l'API di TMDB ma non è approvato né certificato da TMDB. Disponibilità in streaming da JustWatch.</p>`;
@@ -362,7 +366,7 @@ function vistaAnno(){
   }).join('');
   const gruppi = {}; resto.forEach(f => (gruppi[(f.generi||['Altro'])[0]] ||= []).push(f));
   const perGenere = Object.keys(gruppi).sort().map(g => `<h2 class="sez-t">${esc(g)} <span style="color:var(--sec)">${gruppi[g].length} film</span></h2><ul class="la">${gruppi[g].map(f => riga(f, false)).join('')}</ul>`).join('');
-  app.innerHTML = osd('▶ Play', '0:00:00') + testata() + `
+  app.innerHTML = osd('▶ Play', '0:00:00', true) + testata() + `
     <nav class="mrow" aria-label="Mesi"><a href="#m-${ultimo}">◀ ${MESI_B[+ultimo.slice(5)-1]}</a><h1 class="m">Anno ${anno}</h1><span></span></nav>
     <div class="cifre"><div><span>Film</span><span>${films.length}</span></div><div><span>Ore di cinema</span><span>${tcMin(tot)}</span></div><div><span>In sala</span><span>${films.filter(f => f.sala).length}</span></div></div>
     ${top.length ? sez('Top 10 dell\'anno', `<div class="top">${top.map(f => `<a href="#f-${esc(f.id)}">${locandina(f, 'loc', 'CH ' + String(f.top).padStart(2,'0'))}<span class="pz inv">${String(f.top).padStart(2,'0')}</span><span class="tt">${esc(f.titolo)}</span><span class="tr">${nomiTesto(f.regia)}</span></a>`).join('')}</div>`) : ''}
