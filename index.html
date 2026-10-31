@@ -241,16 +241,31 @@ function card(f, i){
   </article>`;
 }
 
+/* ---------- mesi senza film ---------- */
+function prossimoMese(ym){ const [y,m] = ym.split('-').map(Number); return m === 12 ? `${y+1}-01` : `${y}-${String(m+1).padStart(2,'0')}`; }
+function arrivo(ym){
+  const nome = esc(MESI[+ym.slice(5)-1]);
+  if (ym < meseDi(DATI.aggiornato)) return `Nessun film di ${nome} in archivio`;
+  let lun = piu(d(DATI.aggiornato), 7);                       // primo lunedì la cui settimana cade nel mese
+  for (let i = 0; i < 10 && meseDi(ymd(lun)) < ym; i++) lun = piu(lun, 7);
+  return `I film di ${nome}<br>arrivano lunedì ${dm(lun)}`;
+}
+
 /* ---------- vista mese / settimana ---------- */
 function vistaMese(ym, sett){
   const films = FILM.filter(f => meseDi(f.settimana) === ym);
   const mesi = [...new Set(FILM.map(f => meseDi(f.settimana)))].sort();
-  const iM = mesi.indexOf(ym), prec = iM > 0 ? mesi[iM-1] : (iM < 0 ? mesi.filter(m => m < ym).pop() : null), succ = iM >= 0 ? mesi[iM+1] : null;
+  let succ;
+  const iM = mesi.indexOf(ym), prec = iM > 0 ? mesi[iM-1] : (iM < 0 ? mesi.filter(m => m < ym).pop() : null);
+  succ = iM >= 0 ? mesi[iM+1] : null;
+  // dopo l'ultimo mese con film: il mese successivo (NO SIGNAL) è raggiungibile
+  const ultimoM = mesi[mesi.length-1], dopoUltimo = prossimoMese(ultimoM);
+  if (ym === ultimoM) succ = dopoUltimo;
   if (!sett) sett = 'mese';
   const nav = `<nav class="mrow" aria-label="Mesi">${prec ? `<a href="#m-${prec}">◀ ${MESI_B[+prec.slice(5)-1]}</a>` : '<span></span>'}<h1 class="m">${films.length ? `<a href="#m-${ym}" ${sett==='mese'?'aria-current="page"':''} title="Tutto il mese">${esc(nomeMese(ym))}</a>` : esc(nomeMese(ym))}</h1>${succ ? `<a href="#m-${succ}">${MESI_B[+succ.slice(5)-1]} ▶</a>` : `<a href="#anno">Anno ▶</a>`}</nav>`;
   if (!films.length) {          // mese senza film: NO SIGNAL
     app.innerHTML = osd('■ STOP', '--:--:--') + testata() + nav +
-      `<div class="screen"><div class="noise"></div><p class="sig">No signal</p><p>I film di ${esc(MESI[+ym.slice(5)-1])}<br>arrivano il lunedì</p></div>` + piede();
+      `<div class="screen"><div class="noise"></div><p class="sig">No signal</p><p>${arrivo(ym)}</p></div>` + piede();
     vistaCorrente = 'vuoto'; dopo(); return;
   }
   const settimane = [...new Set(films.map(f => f.settimana))].sort();
@@ -397,7 +412,7 @@ let raf = 0; addEventListener('scroll', () => { if (!raf) raf = requestAnimation
 /* ---------- FF / REW quando cambi settimana ---------- */
 function avvolgi(avanti){
   const st = ST(), tc = document.getElementById('tc'), L = app.querySelector('.lista[data-tot]');
-  if (!st || RM) return;
+  if (!st || RM || vistaCorrente === 'vuoto') return;
   st.textContent = avanti ? '▶▶ FF' : '◀◀ REW'; if (!tc || !L) { setTimeout(() => { if (ST()) ST().textContent = '▶ Play'; }, 500); return; }
   veloce = true; const T = +L.dataset.tot; let s = avanti ? 0 : T, k = 0;
   const iv = setInterval(() => { k++; s += (avanti ? 1 : -1) * T/12; tc.textContent = fmt(Math.min(T, Math.max(0, s)));
