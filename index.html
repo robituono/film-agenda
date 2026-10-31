@@ -58,6 +58,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-t
 .box.testata span{display:block}
 .box.piede span{display:block}
 .k{padding:0 2px;cursor:pointer}.k:hover,.k:focus-visible{background:var(--blu);color:var(--gri);outline:none}
+.k:has(.ok){padding:0}.k:has(.ok):hover,.k:has(.ok):focus-visible{background:none;color:inherit}
+.k:hover .ok,.k:focus-visible .ok{background:var(--blu);border-color:var(--blu);color:var(--gri)}
 .ok{display:inline-block;font-size:.82em;border:var(--ln) solid currentColor;border-radius:4px;padding:1px 3px 0;line-height:1;vertical-align:1px;-webkit-text-stroke:0}
 .cred{font-family:var(--txt);font-weight:500;text-transform:none;font-size:13px;line-height:1.45;color:var(--sec);margin-top:12px}
 
