@@ -265,6 +265,14 @@ const vol = m => `<div class="vol" aria-hidden="true" style="--w:${Math.min(100,
 const tags = f => (f.sala ? '<span class="tag inv">In sala</span>' : '') + (f.visto ? '<span class="tag inv">✓ Visto</span>' : '');
 const sez = (titolo, html, aria) => html ? `<section><h2 class="sez-t${titolo ? '' : ' solo'}"${aria ? ` aria-label="${aria}"` : ''}>${titolo}</h2>${html}</section>` : '';
 
+// paese nell'elenco: il primo, più "+N" se sono di più (la lista completa è nella scheda)
+function paese(f){
+  const p = (f.paesi || '').split(',').map(s => s.trim()).filter(Boolean);
+  if (!p.length) return '';
+  const altri = p.length - 1;
+  return `<div class="gen"${altri ? ` aria-label="${esc(p.join(', '))}"` : ''}>${esc(p[0])}${altri ? ` +${altri}` : ''}</div>`;
+}
+
 function card(f, i){
   return `<article class="card" tabindex="-1" data-id="${esc(f.id)}" data-ch="${String(i+1).padStart(2,'0')}">
     <a href="#f-${esc(f.id)}" tabindex="-1" aria-hidden="true">${locandina(f)}</a>
@@ -273,6 +281,7 @@ function card(f, i){
       <h2 class="t"><a href="#f-${esc(f.id)}">${esc(f.titolo)}</a></h2>
       <div class="di">di ${nomi(f.regia)}</div>
       ${f.generi && f.generi.length ? `<div class="gen">${esc(f.generi.join(', '))}</div>` : ''}
+      ${paese(f)}
       ${f.durata ? `<div class="gen">${esc(f.durata)}</div>` : ''}
       ${f.minuti ? vol(f.minuti) : ''}
     </div>
