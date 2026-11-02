@@ -527,7 +527,7 @@ function play(){
   let t = 0; const iv = setInterval(() => { t++; btc.textContent = '0:00:' + String(t).padStart(2,'0'); }, 120);
   setTimeout(() => { clearInterval(iv); boot.classList.add('cut'); setTimeout(() => { boot.remove(); rec(); }, 160); }, 700);
 }
-fetch('dati.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => {
+fetch('dati.json', {cache: 'no-cache'}).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => {
   DATI = j; FILM = j.film; ultimoHash = location.hash; vai(); sveglia();
   setTimeout(play, Math.max(0, minimo - (performance.now() - t0)));
 }).catch(() => {
